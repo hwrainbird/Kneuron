@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Tippy Hider for Knack Builder",
+  "version": "1.2",
+  "description": "Hides those pesky black tooltips in Knack Builder",
+  "icons": {
+    "16": "https://ctrnd.s3.amazonaws.com/media/Cortex-Icon16.png",
+    "48": "https://ctrnd.s3.amazonaws.com/media/Cortex-Icon48.png",
+    "128": "https://ctrnd.s3.amazonaws.com/media/Cortex-Icon128.png"
+  },
+  "permissions": [ "https://ctrnd.s3.amazonaws.com/" ],
+  "host_permissions": [ "https://builder.knack.com/*" ],
+  "content_scripts": [
+    {
+      "matches": [ "https://builder.knack.com/*" ],
+      "js": [ "content.js" ],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src * data: blob: filesystem:"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [ "https://ctrnd.s3.amazonaws.com/media/*" ],
+      "matches": [ "<all_urls>" ]
+    }
+  ],
+  "action": {}
+}
