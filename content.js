@@ -12,9 +12,9 @@ const css = `
 }
 
 @keyframes highlightElement {
-    0% { box-shadow: 0 0 0 2px #ff00d6; }
-    50% { box-shadow: 0 0 10px 2px #ff00d6; }
-    100% { box-shadow: 0 0 0 2px #ff00d6; }
+    0% { box-shadow: inset 0 0 0 2px #ff00d6; }
+    50% { box-shadow: inset 0 0 10px 2px #ff00d6; }
+    100% { box-shadow: inset 0 0 0 2px #ff00d6; }
 }
 
 .highlight-before-click {
@@ -22,6 +22,27 @@ const css = `
 }
 `;
 injectCSS(css);
+
+//Generic Utilities
+async function waitForElement(selector) {
+    return new Promise((resolve) => {
+        if (document.querySelector(selector)) {
+            return resolve(document.querySelector(selector));
+        }
+
+        const observer = new MutationObserver(() => {
+            if (document.querySelector(selector)) {
+                observer.disconnect();
+                resolve(document.querySelector(selector));
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+}
 
 // Function to highlight and click
 function highlightAndClick(element) {
@@ -35,7 +56,7 @@ function highlightAndClick(element) {
 }
 
 // Handle keyboard events.
-document.addEventListener('keydown', function (event) {
+document.addEventListener('keydown', async function (event) {
     let element;
 
     if (event.key === 'Enter') {
@@ -49,9 +70,21 @@ document.addEventListener('keydown', function (event) {
             element = document.querySelector(`#sidebar-nav li:nth-child(${pageIndex}) a`);
         } else if (event.key === '`') {
             element = document.querySelector('.toolbox-back') || document.querySelector('.ast-button');
-        } else if ('qaz'.includes(event.key)) {
-            let toolIndex = 'qaz'.indexOf(event.key) + 1;
-            element = document.querySelector(`.toolboxLinks li:nth-child(${toolIndex}) a`);
+        } else if ('qaz'.includes(event.key)) { //For Pages only, when a view is selected.
+            //Go back to Settings if necessary.
+            const toolboxSelector = `[data-cy=toolbox-links]`;
+            if (!document.querySelector(toolboxSelector)) {
+                element = document.querySelector('.is-active a.settings');
+                if (element) highlightAndClick(element);
+                await waitForElement(toolboxSelector);
+                processQAZ();
+            } else
+                processQAZ();
+
+            function processQAZ() {
+                let toolIndex = 'qaz'.indexOf(event.key) + 1;
+                element = document.querySelector(`[data-cy=toolbox-links] li:nth-child(${toolIndex}) a`);
+            }
         } else if (event.key === 's') {
             element = document.querySelector('.is-active a.settings');
         }
