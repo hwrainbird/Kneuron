@@ -20,6 +20,10 @@ const css = `
 .highlight-before-click {
     animation: highlightElement 0.3s ease-in-out;
 }
+
+#pages-toolbox form > div textarea {
+   height: 300px;
+}
 `;
 injectCSS(css);
 
