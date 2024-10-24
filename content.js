@@ -103,13 +103,3 @@ document.addEventListener('keydown', async function (event) {
 
     if (element) highlightAndClick(element);
 });
-
-// document.addEventListener('click', function (event) {
-//     const target = event.target;
-//     const closestSettings = target.closest('[data-cy="Settings"]');
-    
-//     if (closestSettings) {
-//         // Your logic here
-//         console.log('Settings element found:', closestSettings);
-//     }
-// });
