@@ -21,8 +21,8 @@ const css = `
     animation: highlightElement 0.3s ease-in-out;
 }
 
-#content form > div textarea {
-   max-height: 300px!important;
+#pages-toolbox form > div textarea {
+   height: 300px;
 }
 `;
 injectCSS(css);
