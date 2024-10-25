@@ -1,20 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
   <!-- Background -->
   <rect width="16" height="16" fill="transparent"/>
-
+  
   <!-- K Lines -->
   <!-- Vertical line segments -->
-  <line x1="4" y1="4" x2="4" y2="7" stroke="#FF0000" stroke-width="1.5"/>
-  <line x1="4" y1="9" x2="4" y2="12" stroke="#FF0000" stroke-width="1.5"/>
-
+  <line x1="3" y1="2" x2="3" y2="7" stroke="#FF0000" stroke-width="2"/>
+  <line x1="3" y1="9" x2="3" y2="14" stroke="#FF0000" stroke-width="2"/>
+  
   <!-- Diagonal line segments -->
-  <line x1="5" y1="7" x2="11" y2="3" stroke="#FF0000" stroke-width="1.5"/>
-  <line x1="5" y1="9" x2="11" y2="13" stroke="#FF0000" stroke-width="1.5"/>
-
+  <line x1="4" y1="7" x2="13" y2="2.5" stroke="#FF0000" stroke-width="2"/>
+  <line x1="4" y1="9" x2="13" y2="13.5" stroke="#FF0000" stroke-width="2"/>
+  
   <!-- Connection Circles -->
-  <circle cx="4" cy="3" r="1.5" fill="none" stroke="#b62478" stroke-width="0.75"/>
-  <circle cx="4" cy="8" r="1.5" fill="none" stroke="#b62478" stroke-width="0.75"/>
-  <circle cx="4" cy="13" r="1.5" fill="none" stroke="#b62478" stroke-width="0.75"/>
-  <circle cx="12" cy="3" r="1.5" fill="none" stroke="#b62478" stroke-width="0.75"/>
-  <circle cx="12" cy="13" r="1.5" fill="none" stroke="#b62478" stroke-width="0.75"/>
+  <circle cx="3" cy="2" r="2" fill="#b62478"/>
+  <circle cx="3" cy="8" r="2" fill="#b62478"/>
+  <circle cx="3" cy="14" r="2" fill="#b62478"/>
+  <circle cx="14" cy="2" r="2" fill="#b62478"/>
+  <circle cx="14" cy="14" r="2" fill="#b62478"/>
 </svg>
