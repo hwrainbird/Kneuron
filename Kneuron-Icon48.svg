@@ -4,17 +4,17 @@
   
   <!-- K Lines -->
   <!-- Vertical line segments -->
-  <line x1="12" y1="12" x2="12" y2="20" stroke="#FF0000" stroke-width="4"/>
-  <line x1="12" y1="28" x2="12" y2="36" stroke="#FF0000" stroke-width="4"/>
+  <line x1="8" y1="11" x2="8" y2="20" stroke="#FF0000" stroke-width="5"/>
+  <line x1="8" y1="28" x2="8" y2="37" stroke="#FF0000" stroke-width="5"/>
   
-  <!-- Diagonal line segments - moved right -->
-  <line x1="16" y1="23" x2="33" y2="10" stroke="#FF0000" stroke-width="4"/>
-  <line x1="16" y1="25" x2="33" y2="38" stroke="#FF0000" stroke-width="4"/>
+  <!-- Diagonal line segments -->
+  <line x1="12" y1="21" x2="38" y2="8" stroke="#FF0000" stroke-width="5"/>
+  <line x1="12" y1="26" x2="38" y2="40" stroke="#FF0000" stroke-width="5"/>
   
   <!-- Connection Circles -->
-  <circle cx="12" cy="8" r="4" fill="none" stroke="#b62478" stroke-width="2"/>
-  <circle cx="12" cy="24" r="4" fill="none" stroke="#b62478" stroke-width="2"/>
-  <circle cx="12" cy="40" r="4" fill="none" stroke="#b62478" stroke-width="2"/>
-  <circle cx="36" cy="8" r="4" fill="none" stroke="#b62478" stroke-width="2"/>
-  <circle cx="36" cy="40" r="4" fill="none" stroke="#b62478" stroke-width="2"/>
+  <circle cx="8" cy="6" r="4.7" fill="none" stroke="#b62478" stroke-width="2.5"/>
+  <circle cx="8" cy="24" r="4.7" fill="none" stroke="#b62478" stroke-width="2.5"/>
+  <circle cx="8" cy="42" r="4.7" fill="none" stroke="#b62478" stroke-width="2.5"/>
+  <circle cx="41" cy="6" r="4.7" fill="none" stroke="#b62478" stroke-width="2.5"/>
+  <circle cx="41" cy="42" r="4.7" fill="none" stroke="#b62478" stroke-width="2.5"/>
 </svg>
