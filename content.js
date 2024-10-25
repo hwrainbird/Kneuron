@@ -86,16 +86,22 @@ function highlightAndClick(element) {
 
 document.addEventListener('keydown', async function (event) {
     let element;
+    let keyPressed = event.code;
 
-    if (event.key === 'Enter') {
+    if (keyPressed === 'Enter') {
         element = document.querySelector('a.save') || document.querySelector('.kn-submit button');
+
         if (element && (element.closest('#settings-js') || element.closest('#settings-css'))) return;
         event.preventDefault();
-    } else if (event.key === 'Escape') {
+    } else if (keyPressed === 'Escape') {
         element = document.querySelector('.modal_close') || document.querySelector('a.cancel');
     } else if (event.altKey) {
-        if (event.key >= 1 && event.key <= 6) {
-            let pageIndex = Number(event.key);
+        if (keyPressed.includes('Digit')) {
+            keyPressed = keyPressed.replace('Digit', '');
+        }
+
+        if (keyPressed >= 1 && keyPressed <= 6) {
+            let pageIndex = Number(keyPressed);
             if (pageIndex === 3 || pageIndex === 4) pageIndex = 7 - pageIndex; //Invert 3 and 4 since Pages is used much more often.
             element = document.querySelector(`#sidebar-nav li:nth-child(${pageIndex}) a`);
 
@@ -108,14 +114,17 @@ document.addEventListener('keydown', async function (event) {
                     } catch (error) { }
                 }, 0);
             }
-        } else if (event.key === '`') {
+
+        } else if (keyPressed === 'BackQuote') {
             element = document.querySelector('.toolbox-back') || document.querySelector('.ast-button');
-        } else if ('qazx'.includes(event.key)) { //For Pages only, when a view is selected.
+
+        } else if (['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].includes(keyPressed)) { //For Pages only, when a view is selected.
             //Go back to Settings if necessary.
             const toolboxSelector = `[data-cy=toolbox-links]`;
             if (!document.querySelector(toolboxSelector)) {
                 element = document.querySelector('.is-active a.settings');
                 if (element) highlightAndClick(element);
+
                 try {
                     await waitForElement(toolboxSelector);
                     processSecondColumnKeys();
@@ -124,10 +133,11 @@ document.addEventListener('keydown', async function (event) {
                 processSecondColumnKeys();
 
             function processSecondColumnKeys() {
-                let toolIndex = 'qazx'.indexOf(event.key) + 1;
+                let toolIndex = ['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].indexOf(keyPressed) + 1;
                 element = document.querySelector(`[data-cy=toolbox-links] li:nth-child(${toolIndex}) a`);
             }
-        } else if (event.key === 's') {
+
+        } else if (keyPressed === 'KeyS') {
             element = document.querySelector('.is-active a.settings') || document.querySelector('a.save');
         }
     }
