@@ -115,7 +115,7 @@ document.addEventListener('keydown', async function (event) {
                 }, 0);
             }
 
-        } else if (keyPressed === 'BackQuote') {
+        } else if (keyPressed === 'Backquote') {
             element = document.querySelector('.toolbox-back') || document.querySelector('.ast-button');
 
         } else if (['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].includes(keyPressed)) { //For Pages only, when a view is selected.
