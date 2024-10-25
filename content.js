@@ -83,7 +83,7 @@ function highlightAndClick(element) {
 document.addEventListener('keydown', async function (event) {
     let element;
     let keyPressed = event.code;
-    console.log(keyPressed);
+
     if (keyPressed === 'Enter') {
         element = document.querySelector('a.save') || document.querySelector('.kn-submit button');
 
