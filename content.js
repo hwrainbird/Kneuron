@@ -27,14 +27,40 @@ const css = `
 `;
 injectCSS(css);
 
-async function waitForElement(selector) {
-    return new Promise((resolve) => {
+// Generic MutationObserver to watch for HTML changes and take action.
+const genericObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length) {
+            if (mutation.target.querySelector('.toggle-content')) {
+                autoExpandHiddenTogglers();
+            }
+        }
+    });
+});
+
+// Start observing the document body for changes
+genericObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+
+// Also run it once on initial page load
+document.addEventListener('DOMContentLoaded', autoExpandHiddenTogglers);
+
+async function waitForElement(selector, timeout = 10000) {
+    return new Promise((resolve, reject) => {
         if (document.querySelector(selector)) {
             return resolve(document.querySelector(selector));
         }
 
+        const timeoutId = setTimeout(() => {
+            observer.disconnect();
+            reject(`Timeout waiting for element: ${selector}`);
+        }, timeout);
+
         const observer = new MutationObserver(() => {
             if (document.querySelector(selector)) {
+                clearTimeout(timeoutId);
                 observer.disconnect();
                 resolve(document.querySelector(selector));
             }
@@ -75,8 +101,10 @@ document.addEventListener('keydown', async function (event) {
             //This is to prevent the annoying message "You have unsaved changes" that keeps popping up for no reason.
             if (pageIndex === 4) {
                 setTimeout(async () => {
-                    const cancelButton = await waitForElement('a.cancel');
-                    cancelButton && cancelButton.click();
+                    try {
+                        const cancelButton = await waitForElement('a.cancel');
+                        cancelButton && cancelButton.click();
+                    } catch (error) { }
                 }, 0);
             }
         } else if (event.key === '`') {
@@ -87,8 +115,10 @@ document.addEventListener('keydown', async function (event) {
             if (!document.querySelector(toolboxSelector)) {
                 element = document.querySelector('.is-active a.settings');
                 if (element) highlightAndClick(element);
-                await waitForElement(toolboxSelector);
-                processSecondColumnKeys();
+                try {
+                    await waitForElement(toolboxSelector);
+                    processSecondColumnKeys();
+                } catch (error) { }
             } else
                 processSecondColumnKeys();
 
@@ -103,3 +133,22 @@ document.addEventListener('keydown', async function (event) {
 
     if (element) highlightAndClick(element);
 });
+
+//Auto-detect closed "togglers" and open them.  We have them in list views' settings.
+async function autoExpandHiddenTogglers() {
+    try {
+        await waitForElement('.toggle-content:not(.auto-open-processed)');
+
+        const hiddenToggles = Array.from(document.querySelectorAll('.toggle-content:not(.auto-open-processed)')).filter(el => {
+            const style = window.getComputedStyle(el);
+            return style.visibility === 'hidden' || style.maxHeight === '0px';
+        });
+
+        hiddenToggles.forEach(toggle => {
+            const wrapper = toggle.closest('.toggle-wrapper');
+            const trigger = wrapper.querySelector('.toggle-trigger');
+            trigger.click();
+            toggle.classList.add('auto-open-processed');
+        });
+    } catch (error) { }
+}
