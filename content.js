@@ -12,9 +12,9 @@ const css = `
 }
 
 @keyframes highlightElement {
-    0% { box-shadow: inset 0 0 0 2px #ff00d6; }
-    50% { box-shadow: inset 0 0 10px 2px #ff00d6; }
-    100% { box-shadow: inset 0 0 0 2px #ff00d6; }
+    0% { box-shadow: inset 0 0 0 2px #45003a; }
+    50% { box-shadow: inset 0 0 10px 2px #45003a; }
+    100% { box-shadow: inset 0 0 0 2px #45003a; }
 }
 
 .highlight-before-click {
@@ -43,9 +43,6 @@ genericObserver.observe(document.body, {
     childList: true,
     subtree: true
 });
-
-// Also run it once on initial page load
-document.addEventListener('DOMContentLoaded', autoExpandHiddenTogglers);
 
 async function waitForElement(selector, timeout = 10000) {
     return new Promise((resolve, reject) => {
