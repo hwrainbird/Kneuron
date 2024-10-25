@@ -162,23 +162,41 @@ async function reduceGrids() {
         document.querySelectorAll('.kn-table-element:not(.reduce-processed)').forEach(table => {
             table.classList.add('reduce-processed');
 
-            let groupCount = 0; //Only show first 3 groups, with fade-out like records.
+            let groupCount = 0; // To limit to the first 3 groups
             let rowsPerGroupCount = 0; // To count records under each group
 
             table.querySelectorAll('tbody tr').forEach(row => {
                 // Check if the row is a group header
                 if (row.classList.contains('kn-table-group')) {
-                    rowsPerGroupCount = 0; // Reset the count for the new group
-                } else if (!row.classList.contains('kn-table-totals')) {
-                    // Increment count for each record row
-                    rowsPerGroupCount++;
-                    // Hide the rows if more than 3 records are found under the group, and apply a fade-out effect.
-                    if (rowsPerGroupCount === 2) {
+                    groupCount++;
+                    rowsPerGroupCount = 0; // Reset record count for the new group
+
+                    // Apply fade-out effects for group headers
+                    if (groupCount === 2) {
+                        row.style.opacity = '75%';
+                    } else if (groupCount === 3) {
                         row.style.opacity = '50%';
-                    } else if (rowsPerGroupCount === 3) {
-                        row.style.opacity = '25%';
-                    } else if (rowsPerGroupCount >= 4) {
+                    } else if (groupCount >= 4) {
+                        // Hide group headers beyond the 3rd group
                         row.style.display = 'none';
+                    }
+                } else if (!row.classList.contains('kn-table-totals')) {
+                    if (groupCount > 3) {
+                        // Hide all records beyond the 3rd group
+                        row.style.display = 'none';
+                    } else {
+                        // Increment count for each record row within the first 3 groups
+                        rowsPerGroupCount++;
+
+                        // Apply fade-out effects for rows 2 and 3 within the group
+                        if (rowsPerGroupCount === 2) {
+                            row.style.opacity = '50%';
+                        } else if (rowsPerGroupCount === 3) {
+                            row.style.opacity = '25%';
+                        } else if (rowsPerGroupCount >= 4) {
+                            // Hide rows beyond the 3rd record in each group
+                            row.style.display = 'none';
+                        }
                     }
                 }
             });
