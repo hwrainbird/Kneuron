@@ -31,8 +31,12 @@ injectCSS(css);
 const genericObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.addedNodes.length) {
-            if (mutation.target.querySelector('.toggle-content')) {
+            if (mutation.target.querySelector('.toggle-content:not(.auto-open-processed)')) {
                 autoExpandHiddenTogglers();
+            }
+
+            if (mutation.target.querySelector('.kn-table-element:not(.reduce-processed)')) {
+                reduceGrids();
             }
         }
     });
@@ -148,4 +152,38 @@ async function autoExpandHiddenTogglers() {
             toggle.classList.add('auto-open-processed');
         });
     } catch (error) { }
+}
+
+// Reduce long grids
+async function reduceGrids() {
+    try {
+        await waitForElement('.kn-table-element:not(.reduce-processed)');
+
+        document.querySelectorAll('.kn-table-element:not(.reduce-processed)').forEach(table => {
+            table.classList.add('reduce-processed');
+
+            let groupCount = 0; //Only show first 3 groups, with fade-out like records.
+            let rowsPerGroupCount = 0; // To count records under each group
+
+            table.querySelectorAll('tbody tr').forEach(row => {
+                // Check if the row is a group header
+                if (row.classList.contains('kn-table-group')) {
+                    rowsPerGroupCount = 0; // Reset the count for the new group
+                } else if (!row.classList.contains('kn-table-totals')) {
+                    // Increment count for each record row
+                    rowsPerGroupCount++;
+                    // Hide the rows if more than 3 records are found under the group, and apply a fade-out effect.
+                    if (rowsPerGroupCount === 2) {
+                        row.style.opacity = '50%';
+                    } else if (rowsPerGroupCount === 3) {
+                        row.style.opacity = '25%';
+                    } else if (rowsPerGroupCount >= 4) {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error in reduceGrids:', error);
+    }
 }
