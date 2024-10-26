@@ -87,8 +87,9 @@ function highlightAndClick(element) {
 document.addEventListener('keydown', async function (event) {
     let element;
     let keyPressed = event.code;
+    const isInput = event.target.tagName === 'TEXTAREA' || event.target.tagName === 'INPUT';
 
-    if (keyPressed === 'Enter') {
+    if ((!isInput && (keyPressed === 'Enter') || (event.shiftKey && keyPressed === 'Enter'))) {
         element = document.querySelector('a.save') || document.querySelector('.kn-submit button');
 
         if (element && (element.closest('#settings-js') || element.closest('#settings-css'))) return;
