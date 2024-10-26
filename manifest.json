@@ -22,7 +22,7 @@
   "content_scripts": [
     {
       "matches": [ "https://builder.knack.com/*" ],
-      "js": [ "content.js" ],
+      "js": [ "Kneuron.js" ],
       "run_at": "document_idle"
     }
   ]
