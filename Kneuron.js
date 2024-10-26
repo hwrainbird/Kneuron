@@ -24,6 +24,26 @@ const css = `
 #pages-toolbox form > div textarea {
    height: 300px;
 }
+
+/* Remove the previous CSS and use this instead */
+.nav-item {
+    position: relative;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Parent container styles to ensure proper stacking */
+#objects-nav .vue-recycle-scroller {
+    min-height: 0 !important;
+}
+
+#objects-nav .vue-recycle-scroller__item-wrapper {
+    transform: none !important;
+}
+
+#objects-nav .vue-recycle-scroller__item-view {
+    transform: none !important;
+    position: relative !important;
+}
 `;
 injectCSS(css);
 
@@ -37,6 +57,10 @@ const genericObserver = new MutationObserver((mutations) => {
 
             if (mutation.target.querySelector('.kn-table-element:not(.reduce-processed)')) {
                 reduceGrids();
+            }
+
+            if (mutation.target.querySelector('#objects-nav h3.text-emphasis')) {
+                addTablesFilter();
             }
         }
     });
@@ -91,7 +115,9 @@ document.addEventListener('keydown', async function (event) {
     if (keyPressed === 'Enter') {
         element = document.querySelector('a.save') || document.querySelector('.kn-submit button');
 
-        if (element && (element.closest('#settings-js') || element.closest('#settings-css'))) return;
+        if (element && (element.closest('#settings-js') || element.closest('#settings-css')))
+            return; //Ignore Enter in the Javascript and CSS editors.  Use Alt-S to save, see below KeyS.
+
         event.preventDefault();
     } else if (keyPressed === 'Escape') {
         element = document.querySelector('.modal_close') || document.querySelector('a.cancel');
@@ -102,7 +128,7 @@ document.addEventListener('keydown', async function (event) {
 
         if (keyPressed >= 1 && keyPressed <= 6) {
             let pageIndex = Number(keyPressed);
-            if (pageIndex === 3 || pageIndex === 4) pageIndex = 7 - pageIndex; //Invert 3 and 4 since Pages is used much more often.
+            if (pageIndex === 3 || pageIndex === 4) pageIndex = 7 - pageIndex; //Invert 3 and 4 since Pages is used much more often than Tasks.
             element = document.querySelector(`#sidebar-nav li:nth-child(${pageIndex}) a`);
 
             //This is to prevent the annoying message "You have unsaved changes" that keeps popping up for no reason.
@@ -138,6 +164,9 @@ document.addEventListener('keydown', async function (event) {
             }
 
         } else if (keyPressed === 'KeyS') {
+            //Does two things: 
+            // 1- Activate the Settings toolbox, when a view is selected
+            // 2- Click on Save, when Javascript or CSS editor is active
             element = document.querySelector('.is-active a.settings') || document.querySelector('a.save');
         }
     }
@@ -213,5 +242,51 @@ async function reduceGrids() {
         });
     } catch (error) {
         console.error('Error in reduceGrids:', error);
+    }
+}
+
+function addTablesFilter() {
+    const tablesTitle = document.querySelector('#objects-nav h3.text-emphasis');
+    if (tablesTitle && !document.querySelector('#tablesfilter')) {
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Filter...';
+        searchInput.style.marginLeft = '30px';
+        searchInput.style.padding = '2px 5px';
+        searchInput.style.fontSize = '14px';
+        searchInput.style.borderRadius = '4px';
+        searchInput.style.border = '1px solid #ccc';
+        searchInput.style.height = '35px';
+        searchInput.id = 'tablesfilter';
+
+        searchInput.addEventListener('input', (e) => {
+            filterListItems(e.target.value);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                filterListItems('');
+                searchInput.blur();
+            }
+        });
+
+        tablesTitle.appendChild(searchInput);
+    }
+
+    function filterListItems(searchText) {
+        const listItems = document.querySelectorAll('.nav-item');
+        const searchLower = searchText.toLowerCase();
+
+        listItems.forEach(item => {
+            const spanContent = item.querySelector('span[content]')?.textContent || '';
+            const isMatch = spanContent.toLowerCase().includes(searchLower);
+
+            item.style.display = isMatch ? 'block' : 'none';
+            item.style.position = isMatch ? 'relative' : 'absolute';
+            item.style.height = isMatch ? '' : '0';
+            item.style.margin = isMatch ? '' : '0';
+            item.style.padding = isMatch ? '' : '0';
+        });
     }
 }

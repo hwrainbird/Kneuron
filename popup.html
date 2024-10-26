@@ -37,21 +37,30 @@
         .section {
             margin-bottom: 20px;
         }
+
         .version {
             color: #666;
             font-size: 0.8em;
             text-align: right;
         }
+
+        .note {
+            color: #45003a;
+            font-style: italic;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    <h2>Kneuron 1.0.0 - Keyboard Shortcuts</h2>
+    <h2>Kneuron 1.1.0 - Keyboard Shortcuts</h2>
 
     <div class="section">
         <h3>Global Shortcuts</h3>
         <div class="shortcut">
             <div><span class="key">Enter</span> Save or submit form</div>
             <div class="description">Works on any form or editing view</div>
+            <div class="note">In the Javascript and CSS editors - use Alt+S instead</div>
         </div>
         <div class="shortcut">
             <div><span class="key">Esc</span> Close or cancel</div>
@@ -63,24 +72,35 @@
         <h3>Navigation (with Alt)</h3>
         <div class="shortcut">
             <div><span class="key">Alt</span> + <span class="key">1-6</span> Navigate main menu</div>
-            <div class="description">Quick access to main navigation items on 1st column of the page</div>
+            <div class="description">Quick access to main navigation items on 1st column</div>
+            <div class="note">3 & 4 are swapped for ergonomy (Pages/Tasks)</div>
         </div>
         <div class="shortcut">
-            <div><span class="key">Alt</span> + <span class="key">`</span> (backtick) Go back</div>
-            <div class="description">Click on left arrow at top to return to previous sub-section</div>
+            <div><span class="key">Alt</span> + <span class="key">`</span> (backtick / backquote) Go back</div>
+            <div class="description">Returns to previous sub-section</div>
         </div>
     </div>
 
     <div class="section">
         <h3>View Settings Tools (with Alt)</h3>
-        <h4>These will only work when a view is selected</h4>
         <div class="shortcut">
-            <div><span class="key">Alt</span> + <span class="key">S</span> Settings</div>
-            <div class="description">Quick access to view settings' menu</div>
+            <div><span class="key">Alt</span> + <span class="key">S</span> Settings/Save</div>
+            <div class="description">1. Access view settings menu<br>2. Save in Javascript/CSS editors</div>
         </div>
         <div class="shortcut">
-            <div><span class="key">Alt</span> + <span class="key">Q, A, Z or X</span> 1st to 4th Tool</div>
-            <div class="description">Quick access to the first to fourth tool in 2nd column of the page</div>
+            <div><span class="key">Alt</span> + <span class="key">Q</span>, <span class="key">A</span>, <span class="key">Z</span>, or <span class="key">X</span></div>
+            <div class="description">Quick access to the first through fourth tools in 2nd column</div>
+            <div class="note">Will auto-navigate to Settings first if needed</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Automatic Features</h3>
+        <div class="shortcut">
+            - Automatically expands hidden togglers in list views<br>
+            - Makes Description text areas taller in Pages/Settings toolbox<br>
+            - Reduces long grids (3 groups and 3 records max, with fading effect)<br>
+            - Hides beginners tooltips, except field infos
         </div>
     </div>
 
