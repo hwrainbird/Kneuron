@@ -170,7 +170,7 @@ async function reduceGrids() {
     try {
         await waitForElement('.kn-table-element:not(.reduce-processed)');
 
-        document.querySelectorAll('.kn-table-element:not(.reduce-processed)').forEach(table => {
+        document.querySelectorAll('#pages .kn-table-element:not(.reduce-processed)').forEach(table => {
             table.classList.add('reduce-processed');
 
             let groupCount = 0; // To limit to the first 3 groups
