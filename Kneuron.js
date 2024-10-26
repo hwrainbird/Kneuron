@@ -62,6 +62,11 @@ const genericObserver = new MutationObserver((mutations) => {
             if (mutation.target.querySelector('#objects-nav h3.text-emphasis')) {
                 addTablesFilter();
             }
+
+            if (mutation.target.querySelector('select[data-cy="movecopy-select"]:not(.filter-processed)')) {
+                addMoveCopyViewFilter();
+                mutation.target.querySelector('select[data-cy="movecopy-select"]').classList.add('filter-processed');
+            }
         }
     });
 });
@@ -288,5 +293,54 @@ function addTablesFilter() {
             item.style.margin = isMatch ? '' : '0';
             item.style.padding = isMatch ? '' : '0';
         });
+    }
+}
+
+function addMoveCopyViewFilter() {
+    const selectElement = document.querySelector('select[data-cy="movecopy-select"]');
+    if (selectElement && !document.querySelector('#moveviewfilter')) {
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Filter pages...';
+        searchInput.style.marginBottom = '10px';
+        searchInput.style.padding = '2px 5px';
+        searchInput.style.fontSize = '14px';
+        searchInput.style.borderRadius = '4px';
+        searchInput.style.border = '1px solid #ccc';
+        searchInput.style.height = '35px';
+        searchInput.style.width = '100%';
+        searchInput.id = 'moveviewfilter';
+
+        searchInput.addEventListener('input', (e) => {
+            const hasMatches = filterOptions(e.target.value);
+            // Change background color based on matches
+            searchInput.style.backgroundColor = hasMatches ? 'white' : '#ffebee'; // Light pink when no matches
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                filterOptions('');
+                searchInput.blur();
+                searchInput.style.backgroundColor = 'white'; // Reset background on escape
+            }
+        });
+
+        selectElement.parentNode.insertBefore(searchInput, selectElement);
+    }
+
+    function filterOptions(searchText) {
+        const options = document.querySelectorAll('select[data-cy="movecopy-select"] option');
+        const searchLower = searchText.toLowerCase();
+        let matchFound = false;
+
+        options.forEach(option => {
+            const optionText = option.textContent || '';
+            const isMatch = optionText.toLowerCase().includes(searchLower);
+            option.style.display = isMatch ? '' : 'none';
+            if (isMatch) matchFound = true;
+        });
+
+        return matchFound; // Return whether any matches were found
     }
 }
