@@ -340,6 +340,7 @@ function addMoveCopyViewFilter() {
         resultsPopup.id = 'filter-results-popup';
         resultsPopup.style.position = 'absolute';
         resultsPopup.style.maxHeight = '200px';
+        resultsPopup.style.top = '84px';
         resultsPopup.style.overflowY = 'auto';
         resultsPopup.style.backgroundColor = 'white';
         resultsPopup.style.border = '1px solid #ccc';
@@ -347,7 +348,7 @@ function addMoveCopyViewFilter() {
         resultsPopup.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
         resultsPopup.style.zIndex = '1000';
         resultsPopup.style.display = 'none';
-        resultsPopup.style.width = '100%';
+        resultsPopup.style.width = 'max-content';
 
         searchInput.addEventListener('input', (e) => {
             const hasMatches = filterOptions(e.target.value);
@@ -395,7 +396,7 @@ function addMoveCopyViewFilter() {
         const resultsPopup = document.querySelector('#filter-results-popup');
         if (resultsPopup) {
             resultsPopup.innerHTML = matchingResults.map(text =>
-                `<div style="padding: 5px 10px; cursor: pointer; hover:background-color: #f5f5f5;">${text}</div>`
+                `<div style="font-size: medium; padding: 5px 10px; cursor: pointer; hover:background-color: #f5f5f5;">${text}</div>`
             ).join('');
 
             // Add click handlers for results
