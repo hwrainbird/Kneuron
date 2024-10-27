@@ -469,13 +469,8 @@ function addPagesFilter() {
         searchInput.style.height = '35px';
         searchInput.id = 'incremental-filter';
 
-        searchInput.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-        });
-
-        searchInput.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
+        searchInput.addEventListener('mousedown', (e) => e.stopPropagation());
+        searchInput.addEventListener('click', (e) => e.stopPropagation());
 
         searchInput.addEventListener('input', (e) => {
             const hasMatches = filterPages(e.target.value);
