@@ -65,7 +65,7 @@ const genericObserver = new MutationObserver((mutations) => {
                 reduceLists('.kn-list-items');
             }
 
-            if (mutation.target.querySelector('.kn-list-items:not(.reduce-processed)')) {
+            if (mutation.target.querySelector('.kn-search-list-wrapper:not(.reduce-processed)')) {
                 reduceLists('.kn-search-list-wrapper');
             }
 
