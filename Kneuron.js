@@ -284,6 +284,7 @@ function addTablesFilter() {
         searchInput.style.height = '35px';
         searchInput.id = 'incremental-filter';
         searchInput.addEventListener('input', (e) => {
+            document.querySelector('.left-toolbox').scrollTop = 0;
             const hasMatches = filterListItems(e.target.value);
             searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
         });
