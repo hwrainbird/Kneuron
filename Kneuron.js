@@ -73,6 +73,11 @@ const genericObserver = new MutationObserver((mutations) => {
                 addMoveCopyViewFilter();
                 mutation.target.querySelector('select[data-cy="movecopy-select"]').classList.add('filter-processed');
             }
+
+            if (mutation.target.querySelector('h3[data-cy="page-filter-menu"]:not(.filter-processed)')) {
+                addPagesFilter();
+                mutation.target.querySelector('h3[data-cy="page-filter-menu"]').classList.add('filter-processed');
+            }
         }
     });
 });
@@ -445,6 +450,63 @@ function addMoveCopyViewFilter() {
                 });
             });
         }
+
+        return matchFound;
+    }
+}
+
+function addPagesFilter() {
+    const filterTitle = document.querySelector('h3[data-cy="page-filter-menu"]');
+    if (filterTitle && !document.querySelector('#incremental-filter')) {
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Filter pages...';
+        searchInput.style.marginLeft = '30px';
+        searchInput.style.padding = '2px 5px';
+        searchInput.style.fontSize = '14px';
+        searchInput.style.borderRadius = '4px';
+        searchInput.style.border = '1px solid #ccc';
+        searchInput.style.height = '35px';
+        searchInput.id = 'incremental-filter';
+
+        searchInput.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+        });
+
+        searchInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const hasMatches = filterPages(e.target.value);
+            searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                filterPages('');
+                searchInput.blur();
+                searchInput.style.backgroundColor = 'white';
+            }
+        });
+
+        filterTitle.appendChild(searchInput);
+    }
+
+    function filterPages(searchText) {
+        const pageItems = document.querySelectorAll('li[data-cy="page-link-item"]');
+        const searchLower = searchText.toLowerCase();
+        let matchFound = false;
+
+        pageItems.forEach(item => {
+            const nameElement = item.querySelector('.name');
+            const pageText = nameElement ? nameElement.textContent || '' : '';
+            const isMatch = pageText.toLowerCase().includes(searchLower);
+
+            item.style.display = isMatch ? '' : 'none';
+            if (isMatch) matchFound = true;
+        });
 
         return matchFound;
     }
