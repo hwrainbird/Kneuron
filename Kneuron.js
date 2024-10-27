@@ -132,8 +132,9 @@ document.addEventListener('keydown', async function (event) {
 
     let element;
     let keyPressed = event.code;
+    const isInput = event.target.tagName === 'TEXTAREA' || event.target.tagName === 'INPUT';
 
-    if (keyPressed === 'Enter') {
+    if ((!isInput && (keyPressed === 'Enter') || (event.shiftKey && keyPressed === 'Enter'))) {
         element = document.querySelector('a.save') || document.querySelector('.kn-submit button');
 
         if (element && (element.closest('#settings-js') || element.closest('#settings-css')))
@@ -219,7 +220,7 @@ async function reduceGrids() {
     try {
         await waitForElement('.kn-table-element:not(.reduce-processed)');
 
-        document.querySelectorAll('.kn-table-element:not(.reduce-processed)').forEach(table => {
+        document.querySelectorAll('#pages .kn-table-element:not(.reduce-processed)').forEach(table => {
             table.classList.add('reduce-processed');
 
             let groupCount = 0; // To limit to the first 3 groups
