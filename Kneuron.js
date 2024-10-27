@@ -61,6 +61,10 @@ const genericObserver = new MutationObserver((mutations) => {
                 reduceGrids();
             }
 
+            if (mutation.target.querySelector('.kn-list-items:not(.reduce-processed)')) {
+                reduceLists();
+            }
+
             if (mutation.target.querySelector('#objects-nav h3.text-emphasis')) {
                 addTablesFilter();
             }
@@ -267,6 +271,29 @@ async function reduceGrids() {
         });
     } catch (error) {
         console.error('Error in reduceGrids:', error);
+    }
+}
+
+async function reduceLists() {
+    try {
+        await waitForElement('.kn-list-items:not(.reduce-processed)');
+
+        document.querySelectorAll('#pages .kn-list-items:not(.reduce-processed)').forEach(list => {
+            list.classList.add('reduce-processed');
+            let listCount = 0;
+            list.querySelectorAll('#pages .list-item-wrapper').forEach(listRecord => {
+                listCount++;
+                if (listCount === 1) {
+                    listRecord.style.opacity = '50%';
+                } else if (listCount === 2) {
+                    listRecord.style.opacity = '25%';
+                } else if (listCount >= 3) {
+                    listRecord.style.display = 'none';
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error in reduceLists:', error);
     }
 }
 
