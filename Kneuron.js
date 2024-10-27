@@ -137,14 +137,14 @@ document.addEventListener('keydown', async function (event) {
 
     //if ((!isMultiLineInput && (keyPressed === 'Enter') || (event.shiftKey && keyPressed === 'Enter'))) {
     if ((!isMultiLineInput && keyPressed === 'Enter') || (isMultiLineInput && event.ctrlKey && keyPressed === 'Enter')) {
-        element = document.querySelector('a.save') || document.querySelector('.kn-submit button');
+        element = document.querySelector('[data-cy=confirm]') || document.querySelector('a.save') || document.querySelector('.kn-submit button');
 
         if (element && (element.closest('#settings-js') || element.closest('#settings-css')))
             return; //Ignore Enter in the Javascript and CSS editors.  Use Alt-S to save, see below KeyS.
 
         event.preventDefault();
     } else if (keyPressed === 'Escape') {
-        element = document.querySelector('.modal_close') || document.querySelector('a.cancel');
+        element = document.querySelector('[data-cy=cancel]') || document.querySelector('.modal_close') || document.querySelector('a.cancel');
     } else if (event.altKey) {
         if (keyPressed.includes('Digit')) {
             keyPressed = keyPressed.replace('Digit', '');
@@ -320,6 +320,7 @@ function addTablesFilter() {
 function addMoveCopyViewFilter() {
     const selectElement = document.querySelector('select[data-cy="movecopy-select"]');
     if (selectElement && !document.querySelector('#incremental-filter')) {
+        // Create filter input
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.placeholder = 'Filter pages...';
@@ -331,30 +332,91 @@ function addMoveCopyViewFilter() {
         searchInput.style.height = '35px';
         searchInput.style.width = '100%';
         searchInput.id = 'incremental-filter';
+
+        // Create popup for results
+        const resultsPopup = document.createElement('div');
+        resultsPopup.id = 'filter-results-popup';
+        resultsPopup.style.position = 'absolute';
+        resultsPopup.style.maxHeight = '200px';
+        resultsPopup.style.overflowY = 'auto';
+        resultsPopup.style.backgroundColor = 'white';
+        resultsPopup.style.border = '1px solid #ccc';
+        resultsPopup.style.borderRadius = '4px';
+        resultsPopup.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+        resultsPopup.style.zIndex = '1000';
+        resultsPopup.style.display = 'none';
+        resultsPopup.style.width = '100%';
+
         searchInput.addEventListener('input', (e) => {
             const hasMatches = filterOptions(e.target.value);
             searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
+
+            // Show/hide popup based on whether there's input
+            resultsPopup.style.display = e.target.value ? 'block' : 'none';
         });
+
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 searchInput.value = '';
                 filterOptions('');
                 searchInput.blur();
                 searchInput.style.backgroundColor = 'white';
+                resultsPopup.style.display = 'none';
             }
         });
-        selectElement.parentNode.insertBefore(searchInput, selectElement);
+
+        // Add input and popup to the page
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.appendChild(searchInput);
+        container.appendChild(resultsPopup);
+        selectElement.parentNode.insertBefore(container, selectElement);
     }
+
     function filterOptions(searchText) {
         const options = document.querySelectorAll('select[data-cy="movecopy-select"] option');
         const searchLower = searchText.toLowerCase();
         let matchFound = false;
+        let matchingResults = [];
+
         options.forEach(option => {
             const optionText = option.textContent || '';
             const isMatch = optionText.toLowerCase().includes(searchLower);
             option.style.display = isMatch ? '' : 'none';
-            if (isMatch) matchFound = true;
+            if (isMatch) {
+                matchFound = true;
+                matchingResults.push(optionText);
+            }
         });
+
+        // Update popup content
+        const resultsPopup = document.querySelector('#filter-results-popup');
+        if (resultsPopup) {
+            resultsPopup.innerHTML = matchingResults.map(text =>
+                `<div style="padding: 5px 10px; cursor: pointer; hover:background-color: #f5f5f5;">${text}</div>`
+            ).join('');
+
+            // Add click handlers for results
+            resultsPopup.querySelectorAll('div').forEach((div, index) => {
+                div.addEventListener('mouseover', () => {
+                    div.style.backgroundColor = '#f5f5f5';
+                });
+                div.addEventListener('mouseout', () => {
+                    div.style.backgroundColor = 'white';
+                });
+                div.addEventListener('click', () => {
+                    // Find and select the corresponding option in the select element
+                    const options = Array.from(document.querySelectorAll('select[data-cy="movecopy-select"] option'));
+                    const matchingOption = options.find(opt => opt.textContent === div.textContent);
+                    if (matchingOption) {
+                        matchingOption.selected = true;
+                        resultsPopup.style.display = 'none';
+                        searchInput.value = '';
+                    }
+                });
+            });
+        }
+
         return matchFound;
     }
 }
