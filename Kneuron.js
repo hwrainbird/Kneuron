@@ -6,6 +6,8 @@ function injectCSS(css) {
     document.head.appendChild(style);
 }
 
+const ERROR_COLOR = '#e7c8e2';
+
 const css = `
 [data-tippy-root]:not(:has(.kn-help-tip)) {
     display: none !important;
@@ -252,7 +254,7 @@ async function reduceGrids() {
 
 function addTablesFilter() {
     const tablesTitle = document.querySelector('#objects-nav h3.text-emphasis');
-    if (tablesTitle && !document.querySelector('#tablesfilter')) {
+    if (tablesTitle && !document.querySelector('#tables-filter')) {
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.placeholder = 'Filter...';
@@ -262,43 +264,44 @@ function addTablesFilter() {
         searchInput.style.borderRadius = '4px';
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
-        searchInput.id = 'tablesfilter';
-
+        searchInput.id = 'tables-filter';
         searchInput.addEventListener('input', (e) => {
-            filterListItems(e.target.value);
+            const hasMatches = filterListItems(e.target.value);
+            searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
         });
-
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 searchInput.value = '';
                 filterListItems('');
                 searchInput.blur();
+                searchInput.style.backgroundColor = 'white';
             }
         });
-
         tablesTitle.appendChild(searchInput);
     }
-
     function filterListItems(searchText) {
-        const listItems = document.querySelectorAll('.nav-item');
+        const listItems = document.querySelectorAll('[id^=object-li-object_].nav-item');
         const searchLower = searchText.toLowerCase();
+        let matchFound = false;
 
         listItems.forEach(item => {
             const spanContent = item.querySelector('span[content]')?.textContent || '';
             const isMatch = spanContent.toLowerCase().includes(searchLower);
-
             item.style.display = isMatch ? 'block' : 'none';
             item.style.position = isMatch ? 'relative' : 'absolute';
             item.style.height = isMatch ? '' : '0';
             item.style.margin = isMatch ? '' : '0';
             item.style.padding = isMatch ? '' : '0';
+            if (isMatch) matchFound = true;
         });
+
+        return matchFound;
     }
 }
 
 function addMoveCopyViewFilter() {
     const selectElement = document.querySelector('select[data-cy="movecopy-select"]');
-    if (selectElement && !document.querySelector('#moveviewfilter')) {
+    if (selectElement && !document.querySelector('#move-copy-view-filter')) {
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.placeholder = 'Filter pages...';
@@ -309,38 +312,31 @@ function addMoveCopyViewFilter() {
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
         searchInput.style.width = '100%';
-        searchInput.id = 'moveviewfilter';
-
+        searchInput.id = 'move-copy-view-filter';
         searchInput.addEventListener('input', (e) => {
             const hasMatches = filterOptions(e.target.value);
-            // Change background color based on matches
-            searchInput.style.backgroundColor = hasMatches ? 'white' : '#ffebee'; // Light pink when no matches
+            searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
         });
-
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 searchInput.value = '';
                 filterOptions('');
                 searchInput.blur();
-                searchInput.style.backgroundColor = 'white'; // Reset background on escape
+                searchInput.style.backgroundColor = 'white';
             }
         });
-
         selectElement.parentNode.insertBefore(searchInput, selectElement);
     }
-
     function filterOptions(searchText) {
         const options = document.querySelectorAll('select[data-cy="movecopy-select"] option');
         const searchLower = searchText.toLowerCase();
         let matchFound = false;
-
         options.forEach(option => {
             const optionText = option.textContent || '';
             const isMatch = optionText.toLowerCase().includes(searchLower);
             option.style.display = isMatch ? '' : 'none';
             if (isMatch) matchFound = true;
         });
-
-        return matchFound; // Return whether any matches were found
+        return matchFound;
     }
 }
