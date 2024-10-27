@@ -109,6 +109,7 @@ function highlightAndClick(element) {
     if (!element) return;
 
     element.classList.add('highlight-before-click');
+    element.focus();
     setTimeout(() => {
         element.classList.remove('highlight-before-click');
         element.click();
@@ -132,9 +133,10 @@ document.addEventListener('keydown', async function (event) {
 
     let element;
     let keyPressed = event.code;
-    const isInput = event.target.tagName === 'TEXTAREA' || event.target.tagName === 'INPUT';
+    const isMultiLineInput = event.target.tagName === 'TEXTAREA';
 
-    if ((!isInput && (keyPressed === 'Enter') || (event.shiftKey && keyPressed === 'Enter'))) {
+    //if ((!isMultiLineInput && (keyPressed === 'Enter') || (event.shiftKey && keyPressed === 'Enter'))) {
+    if ((!isMultiLineInput && keyPressed === 'Enter') || (isMultiLineInput && event.ctrlKey && keyPressed === 'Enter')) {
         element = document.querySelector('a.save') || document.querySelector('.kn-submit button');
 
         if (element && (element.closest('#settings-js') || element.closest('#settings-css')))
@@ -186,10 +188,11 @@ document.addEventListener('keydown', async function (event) {
             }
 
         } else if (keyPressed === 'KeyS') {
-            //Does two things: 
+            //Does three things, depending on context: 
             // 1- Activate the Settings toolbox, when a view is selected
-            // 2- Click on Save, when Javascript or CSS editor is active
-            element = document.querySelector('.is-active a.settings') || document.querySelector('a.save');
+            // 2- Puts cursor on the Filter box when it is visible
+            // 3- Click on Save, when Javascript or CSS editor is active
+            element = document.querySelector('#incremental-filter') || document.querySelector('.is-active a.settings') || document.querySelector('a.save');
         }
     }
 
@@ -269,7 +272,7 @@ async function reduceGrids() {
 
 function addTablesFilter() {
     const tablesTitle = document.querySelector('#objects-nav h3.text-emphasis');
-    if (tablesTitle && !document.querySelector('#tables-filter')) {
+    if (tablesTitle && !document.querySelector('#incremental-filter')) {
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.placeholder = 'Filter...';
@@ -279,7 +282,7 @@ function addTablesFilter() {
         searchInput.style.borderRadius = '4px';
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
-        searchInput.id = 'tables-filter';
+        searchInput.id = 'incremental-filter';
         searchInput.addEventListener('input', (e) => {
             const hasMatches = filterListItems(e.target.value);
             searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
@@ -316,7 +319,7 @@ function addTablesFilter() {
 
 function addMoveCopyViewFilter() {
     const selectElement = document.querySelector('select[data-cy="movecopy-select"]');
-    if (selectElement && !document.querySelector('#move-copy-view-filter')) {
+    if (selectElement && !document.querySelector('#incremental-filter')) {
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.placeholder = 'Filter pages...';
@@ -327,7 +330,7 @@ function addMoveCopyViewFilter() {
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
         searchInput.style.width = '100%';
-        searchInput.id = 'move-copy-view-filter';
+        searchInput.id = 'incremental-filter';
         searchInput.addEventListener('input', (e) => {
             const hasMatches = filterOptions(e.target.value);
             searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
