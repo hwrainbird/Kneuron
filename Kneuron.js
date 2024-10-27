@@ -62,7 +62,11 @@ const genericObserver = new MutationObserver((mutations) => {
             }
 
             if (mutation.target.querySelector('.kn-list-items:not(.reduce-processed)')) {
-                reduceLists();
+                reduceLists('.kn-list-items');
+            }
+
+            if (mutation.target.querySelector('.kn-list-items:not(.reduce-processed)')) {
+                reduceLists('.kn-search-list-wrapper');
             }
 
             if (mutation.target.querySelector('#objects-nav h3.text-emphasis')) {
@@ -279,11 +283,11 @@ async function reduceGrids() {
     }
 }
 
-async function reduceLists() {
+async function reduceLists(selector) {
     try {
-        await waitForElement('.kn-list-items:not(.reduce-processed)');
+        await waitForElement(`#pages ${selector}:not(.reduce-processed)`);
 
-        document.querySelectorAll('#pages .kn-list-items:not(.reduce-processed)').forEach(list => {
+        document.querySelectorAll(`#pages ${selector}:not(.reduce-processed)`).forEach(list => {
             list.classList.add('reduce-processed');
             let listCount = 0;
             list.querySelectorAll('#pages .list-item-wrapper').forEach(listRecord => {
