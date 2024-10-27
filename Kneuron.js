@@ -133,7 +133,7 @@ document.addEventListener('keydown', async function (event) {
         event.code.replace('Digit', '') <= 6) {
         // Check if we're in an input field or contenteditable element
         const activeElement = document.activeElement;
-        if ((activeElement.tagName === 'INPUT' && activeElement.id !== 'incremental-filter') ||
+        if ((activeElement.tagName === 'INPUT' && !activeElement.id.startsWith('incremental-filter')) ||
             activeElement.tagName === 'TEXTAREA' ||
             activeElement.isContentEditable) {
             return; // Exit early, allowing default Alt+number behavior
@@ -201,7 +201,7 @@ document.addEventListener('keydown', async function (event) {
             // 1- Activate the Settings toolbox, when a view is selected
             // 2- Puts cursor on the Filter box when it is visible
             // 3- Click on Save, when Javascript or CSS editor is active
-            element = document.querySelector('#incremental-filter') || document.querySelector('.is-active a.settings') || document.querySelector('a.save');
+            element = document.querySelector('[id^=incremental-filter]') || document.querySelector('.is-active a.settings') || document.querySelector('a.save');
         }
     }
 
@@ -304,17 +304,17 @@ async function reduceLists() {
 
 function addTablesFilter() {
     const tablesTitle = document.querySelector('#objects-nav h3.text-emphasis');
-    if (tablesTitle && !document.querySelector('#incremental-filter')) {
+    if (tablesTitle && !document.querySelector('#incremental-filter-tables')) {
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
-        searchInput.placeholder = 'Filter...';
+        searchInput.placeholder = 'Filter tables...';
         searchInput.style.marginLeft = '30px';
         searchInput.style.padding = '2px 5px';
         searchInput.style.fontSize = '14px';
         searchInput.style.borderRadius = '4px';
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
-        searchInput.id = 'incremental-filter';
+        searchInput.id = 'incremental-filter-tables';
         searchInput.addEventListener('input', (e) => {
             document.querySelector('.left-toolbox').scrollTop = 0;
             const hasMatches = filterListItems(e.target.value);
@@ -353,7 +353,7 @@ function addTablesFilter() {
 
 function addMoveCopyViewFilter() {
     const selectElement = document.querySelector('select[data-cy="movecopy-select"]');
-    if (selectElement && !document.querySelector('#incremental-filter')) {
+    if (selectElement && !document.querySelector('#incremental-filter-movecopy')) {
         // Create filter input
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
@@ -365,7 +365,7 @@ function addMoveCopyViewFilter() {
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
         searchInput.style.width = '100%';
-        searchInput.id = 'incremental-filter';
+        searchInput.id = 'incremental-filter-movecopy';
 
         // Create popup for results
         const resultsPopup = document.createElement('div');
@@ -457,7 +457,7 @@ function addMoveCopyViewFilter() {
 
 function addPagesFilter() {
     const filterTitle = document.querySelector('h3[data-cy="page-filter-menu"]');
-    if (filterTitle && !document.querySelector('#incremental-filter')) {
+    if (filterTitle && !document.querySelector('#incremental-filter-pages')) {
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.placeholder = 'Filter pages...';
@@ -467,7 +467,7 @@ function addPagesFilter() {
         searchInput.style.borderRadius = '4px';
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
-        searchInput.id = 'incremental-filter';
+        searchInput.id = 'incremental-filter-pages';
 
         searchInput.addEventListener('mousedown', (e) => e.stopPropagation());
         searchInput.addEventListener('click', (e) => e.stopPropagation());
