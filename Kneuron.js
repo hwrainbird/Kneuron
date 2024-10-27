@@ -116,6 +116,20 @@ function highlightAndClick(element) {
 }
 
 document.addEventListener('keydown', async function (event) {
+    // First check if we're in an input field
+    if (event.altKey &&
+        event.code.startsWith('Digit') &&
+        event.code.replace('Digit', '') >= 1 &&
+        event.code.replace('Digit', '') <= 6) {
+        // Check if we're in an input field or contenteditable element
+        const activeElement = document.activeElement;
+        if (activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.isContentEditable) {
+            return; // Exit early, allowing default Alt+number behavior
+        }
+    }
+
     let element;
     let keyPressed = event.code;
 
