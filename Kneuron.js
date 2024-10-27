@@ -124,7 +124,7 @@ document.addEventListener('keydown', async function (event) {
         event.code.replace('Digit', '') <= 6) {
         // Check if we're in an input field or contenteditable element
         const activeElement = document.activeElement;
-        if (activeElement.tagName === 'INPUT' ||
+        if ((activeElement.tagName === 'INPUT' && activeElement.id !== 'incremental-filter') ||
             activeElement.tagName === 'TEXTAREA' ||
             activeElement.isContentEditable) {
             return; // Exit early, allowing default Alt+number behavior
@@ -298,6 +298,7 @@ function addTablesFilter() {
         });
         tablesTitle.appendChild(searchInput);
     }
+
     function filterListItems(searchText) {
         const listItems = document.querySelectorAll('[id^=object-li-object_].nav-item');
         const searchLower = searchText.toLowerCase();
@@ -412,7 +413,6 @@ function addMoveCopyViewFilter() {
                     if (matchingOption) {
                         matchingOption.selected = true;
                         resultsPopup.style.display = 'none';
-                        searchInput.value = '';
                     }
                 });
             });
