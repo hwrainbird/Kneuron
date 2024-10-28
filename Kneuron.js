@@ -139,7 +139,6 @@ document.addEventListener('keydown', async function (event) {
         event.code.startsWith('Digit') &&
         event.code.replace('Digit', '') >= 1 &&
         event.code.replace('Digit', '') <= 6) {
-        // Check if we're in an input field or contenteditable element
         const activeElement = document.activeElement;
         if ((activeElement.tagName === 'INPUT' && !activeElement.id.startsWith('incremental-filter')) ||
             activeElement.tagName === 'TEXTAREA' ||
@@ -235,7 +234,6 @@ async function autoExpandHiddenTogglers() {
     } catch (error) { }
 }
 
-// Reduce long grids
 async function reduceGrids() {
     try {
         await waitForElement('.kn-table-element:not(.reduce-processed)');
@@ -243,39 +241,32 @@ async function reduceGrids() {
         document.querySelectorAll('#pages .kn-table-element:not(.reduce-processed)').forEach(table => {
             table.classList.add('reduce-processed');
 
-            let groupCount = 0; // To limit to the first 3 groups
-            let rowsPerGroupCount = 0; // To count records under each group
+            let groupCount = 0;
+            let rowsPerGroupCount = 0;
 
             table.querySelectorAll('tbody tr').forEach(row => {
-                // Check if the row is a group header
                 if (row.classList.contains('kn-table-group')) {
                     groupCount++;
-                    rowsPerGroupCount = 0; // Reset record count for the new group
+                    rowsPerGroupCount = 0;
 
-                    // Apply fade-out effects for group headers
                     if (groupCount === 2) {
                         row.style.opacity = '75%';
                     } else if (groupCount === 3) {
                         row.style.opacity = '50%';
                     } else if (groupCount >= 4) {
-                        // Hide group headers beyond the 3rd group
                         row.style.display = 'none';
                     }
                 } else if (!row.classList.contains('kn-table-totals')) {
                     if (groupCount > 3) {
-                        // Hide all records beyond the 3rd group
                         row.style.display = 'none';
                     } else {
-                        // Increment count for each record row within the first 3 groups
                         rowsPerGroupCount++;
 
-                        // Apply fade-out effects for rows 2 and 3 within the group
                         if (rowsPerGroupCount === 2) {
                             row.style.opacity = '50%';
                         } else if (rowsPerGroupCount === 3) {
                             row.style.opacity = '25%';
                         } else if (rowsPerGroupCount >= 4) {
-                            // Hide rows beyond the 3rd record in each group
                             row.style.display = 'none';
                         }
                     }
@@ -362,7 +353,6 @@ function addTablesFilter() {
 function addMoveCopyViewFilter() {
     const selectElement = document.querySelector('select[data-cy="movecopy-select"]');
     if (selectElement && !document.querySelector('#incremental-filter-movecopy')) {
-        // Create filter input
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.placeholder = 'Filter pages...';
@@ -375,7 +365,6 @@ function addMoveCopyViewFilter() {
         searchInput.style.width = '100%';
         searchInput.id = 'incremental-filter-movecopy';
 
-        // Create popup for results
         const resultsPopup = document.createElement('div');
         resultsPopup.id = 'filter-results-popup';
         resultsPopup.style.position = 'absolute';
@@ -394,7 +383,6 @@ function addMoveCopyViewFilter() {
             const hasMatches = filterOptions(e.target.value);
             searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
 
-            // Show/hide popup based on whether there's input
             resultsPopup.style.display = e.target.value ? 'block' : 'none';
         });
 
@@ -408,7 +396,6 @@ function addMoveCopyViewFilter() {
             }
         });
 
-        // Add input and popup to the page
         const container = document.createElement('div');
         container.style.position = 'relative';
         container.appendChild(searchInput);
@@ -432,14 +419,12 @@ function addMoveCopyViewFilter() {
             }
         });
 
-        // Update popup content
         const resultsPopup = document.querySelector('#filter-results-popup');
         if (resultsPopup) {
             resultsPopup.innerHTML = matchingResults.map(text =>
                 `<div style="font-size: medium; padding: 5px 10px; cursor: pointer; hover:background-color: #f5f5f5;">${text}</div>`
             ).join('');
 
-            // Add click handlers for results
             resultsPopup.querySelectorAll('div').forEach((div, index) => {
                 div.addEventListener('mouseover', () => {
                     div.style.backgroundColor = '#f5f5f5';
@@ -448,7 +433,6 @@ function addMoveCopyViewFilter() {
                     div.style.backgroundColor = 'white';
                 });
                 div.addEventListener('click', () => {
-                    // Find and select the corresponding option in the select element
                     const options = Array.from(document.querySelectorAll('select[data-cy="movecopy-select"] option'));
                     const matchingOption = options.find(opt => opt.textContent === div.textContent);
                     if (matchingOption) {
@@ -571,7 +555,7 @@ function addPagesFilter() {
 function addFieldsFilter() {
     const fieldTabs = document.querySelector('#view-add-items>div.buttonFilter');
     if (!fieldTabs || document.querySelector('#incremental-filter-fields')) {
-        return; // Exit if fieldTabs doesn't exist or filter input already exists
+        return;
     }
 
     const searchInput = document.createElement('input');
@@ -584,7 +568,7 @@ function addFieldsFilter() {
     searchInput.style.border = '1px solid #ccc';
     searchInput.style.height = '35px';
     searchInput.id = 'incremental-filter-fields';
-    searchInput.classList.add('filter-input'); // Use a CSS class for styling
+    searchInput.classList.add('filter-input');
 
     searchInput.addEventListener('input', (e) => {
         document.querySelector('#pages .toolbox-body').scrollTop = 0;
