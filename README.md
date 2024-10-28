@@ -28,8 +28,6 @@ The Wiki includes:
 - Step-by-step installation guide
 - Feature documentation
 - Keyboard shortcut reference
-- Tips and best practices
-- Troubleshooting guide
 
 ## Getting Started
 
