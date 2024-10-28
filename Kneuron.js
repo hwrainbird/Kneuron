@@ -73,6 +73,10 @@ const genericObserver = new MutationObserver((mutations) => {
                 addTablesFilter();
             }
 
+            if (mutation.target.querySelector('#view-add-items')) {
+                addFieldsFilter();
+            }
+
             if (mutation.target.querySelector('select[data-cy="movecopy-select"]:not(.filter-processed)')) {
                 addMoveCopyViewFilter();
                 mutation.target.querySelector('select[data-cy="movecopy-select"]').classList.add('filter-processed');
@@ -201,7 +205,7 @@ document.addEventListener('keydown', async function (event) {
             }
 
         } else if (keyPressed === 'KeyS') {
-            //Does three things, depending on context: 
+            //Does three things, depending on context:
             // 1- Activate the Settings toolbox, when a view is selected
             // 2- Puts cursor on the Filter box when it is visible
             // 3- Click on Save, when Javascript or CSS editor is active
@@ -508,5 +512,83 @@ function addPagesFilter() {
         });
 
         return matchFound;
+    }
+}
+
+function addFieldsFilter() {
+    const fieldTabs = document.querySelector('#view-add-items>div.buttonFilter');
+    if (!fieldTabs || document.querySelector('#incremental-filter-fields')) {
+        return; // Exit if fieldTabs doesn't exist or filter input already exists
+    }
+
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Filter fields...';
+    searchInput.style.marginLeft = '30px';
+    searchInput.style.padding = '2px 5px';
+    searchInput.style.fontSize = '14px';
+    searchInput.style.borderRadius = '4px';
+    searchInput.style.border = '1px solid #ccc';
+    searchInput.style.height = '35px';
+    searchInput.id = 'incremental-filter-fields';
+    searchInput.classList.add('filter-input'); // Use a CSS class for styling
+
+    searchInput.addEventListener('input', (e) => {
+        document.querySelector('#pages .toolbox-body').scrollTop = 0;
+        const hasMatches = filterListItems(e.target.value);
+        searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            searchInput.value = '';
+            filterListItems('');
+            searchInput.blur();
+            searchInput.style.backgroundColor = 'white';
+        }
+    });
+
+    fieldTabs.appendChild(searchInput);
+
+    function filterListItems(searchText) {
+        const connectionsIsActive = document.querySelector('[data-cy=connections]').classList.contains('is-active');
+        const listItems = connectionsIsActive ? document.querySelectorAll('div.items-wrapper') : document.querySelectorAll('.view-add-item');
+        const searchLower = searchText.toLowerCase();
+        let matchFound = false;
+
+        listItems.forEach(item => {
+            if (connectionsIsActive) {
+                const addItemsList = item.querySelectorAll('.view-add-item');
+                let childMatchFound = false;
+
+                addItemsList.forEach(addItem => {
+                    if (filterItem(addItem, searchLower)) {
+                        matchFound = true;
+                        childMatchFound = true;
+                    }
+                });
+
+                item.style.display = childMatchFound ? 'block' : 'none';
+            } else {
+                if (filterItem(item, searchLower)) {
+                    matchFound = true;
+                }
+            }
+        });
+
+        return matchFound;
+    }
+
+    function filterItem(item, searchLower) {
+        const spanContent = item.querySelector('span').textContent || '';
+        const isMatch = spanContent.toLowerCase().includes(searchLower);
+
+        item.style.display = isMatch ? 'block' : 'none';
+        item.style.position = isMatch ? 'relative' : 'absolute';
+        item.style.height = isMatch ? '' : '0';
+        item.style.margin = isMatch ? '' : '0';
+        item.style.padding = isMatch ? '' : '0';
+
+        return isMatch;
     }
 }
