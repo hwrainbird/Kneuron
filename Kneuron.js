@@ -551,7 +551,8 @@ function addFieldsFilter() {
     fieldTabs.appendChild(searchInput);
 
     function filterListItems(searchText) {
-        const connectionsIsActive = document.querySelector('[data-cy=connections]').classList.contains('is-active');
+        const connectionsElement = document.querySelector('[data-cy=connections]');
+        const connectionsIsActive = connectionsElement && connectionsElement.classList.contains('is-active');
         const listItems = connectionsIsActive ? document.querySelectorAll('div.items-wrapper') : document.querySelectorAll('.view-add-item');
         const searchLower = searchText.toLowerCase();
         let matchFound = false;
