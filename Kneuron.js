@@ -479,12 +479,10 @@ function addPagesFilter() {
 
         searchInput.addEventListener('mousedown', (e) => e.stopPropagation());
         searchInput.addEventListener('click', (e) => e.stopPropagation());
-
         searchInput.addEventListener('input', (e) => {
             const hasMatches = filterPages(e.target.value);
             searchInput.style.backgroundColor = hasMatches ? 'white' : ERROR_COLOR;
         });
-
         searchInput.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 searchInput.value = '';
@@ -493,23 +491,78 @@ function addPagesFilter() {
                 searchInput.style.backgroundColor = 'white';
             }
         });
-
         filterTitle.appendChild(searchInput);
     }
 
     function filterPages(searchText) {
-        const pageItems = document.querySelectorAll('li[data-cy="page-link-item"]');
         const searchLower = searchText.toLowerCase();
         let matchFound = false;
 
-        pageItems.forEach(item => {
+        function showParents(element) {
+            let current = element;
+            while (current) {
+                if (current.style) {
+                    current.style.display = '';
+                }
+
+                if (current.tagName === 'LI') {
+                    const childContainer = current.querySelector('ul.page-list-sortable');
+                    if (childContainer) {
+                        childContainer.style.display = '';
+                    }
+                }
+
+                current = current.parentElement;
+                if (current && current.tagName === 'UL') {
+                    current = current.parentElement;
+                }
+            }
+        }
+
+        function processPageItem(item) {
             const nameElement = item.querySelector('.name');
             const pageText = nameElement ? nameElement.textContent || '' : '';
             const isMatch = pageText.toLowerCase().includes(searchLower);
 
-            item.style.display = isMatch ? '' : 'none';
-            if (isMatch) matchFound = true;
-        });
+            let childrenMatch = false;
+            const childList = item.querySelector('ul.page-list-sortable');
+            if (childList) {
+                const childItems = childList.querySelectorAll(':scope > li[data-cy="page-link-item"]');
+                childItems.forEach(childItem => {
+                    if (processPageItem(childItem)) {
+                        childrenMatch = true;
+                    }
+                });
+            }
+
+            const shouldShow = isMatch || childrenMatch;
+
+            if (shouldShow) {
+                showParents(item);
+                matchFound = true;
+                item.style.display = '';
+                if (childList) {
+                    childList.style.display = '';
+                }
+            } else {
+                item.style.display = 'none';
+                if (childList) {
+                    childList.style.display = 'none';
+                }
+            }
+
+            return shouldShow;
+        }
+
+        if (!searchText) {
+            document.querySelectorAll('li[data-cy="page-link-item"], ul.page-list-sortable').forEach(el => {
+                el.style.display = '';
+            });
+            return true;
+        }
+
+        const topLevelItems = document.querySelectorAll('ul.page-list-sortable > li[data-cy="page-link-item"]');
+        topLevelItems.forEach(processPageItem);
 
         return matchFound;
     }
