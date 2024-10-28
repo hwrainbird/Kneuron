@@ -568,7 +568,10 @@ function addFieldsFilter() {
                         childMatchFound = true;
                     }
                 });
-
+                if (childMatchFound) {
+                    const expandButton = item.querySelector('.expandableList_trigger:not(.open)');
+                    expandButton && expandButton.click();
+                }
                 item.style.display = childMatchFound ? 'block' : 'none';
             } else {
                 if (filterItem(item, searchLower)) {
