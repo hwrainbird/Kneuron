@@ -440,6 +440,12 @@ function addMoveCopyViewFilter() {
                     if (matchingOption) {
                         matchingOption.selected = true;
                         resultsPopup.style.display = 'none';
+                        const selectElement = document.querySelector('select[data-v-6eadacf6]');
+                        if (selectElement) {
+                            selectElement.value = matchingOption.value;
+                            const event = new Event('change', { bubbles: true });
+                            selectElement.dispatchEvent(event);
+                        }
                     }
                 });
             });
