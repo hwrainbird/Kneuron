@@ -151,9 +151,11 @@ document.addEventListener('keydown', async function (event) {
     let keyPressed = event.code;
     const isMultiLineInput = event.target.tagName === 'TEXTAREA';
 
-    //if ((!isMultiLineInput && (keyPressed === 'Enter') || (event.shiftKey && keyPressed === 'Enter'))) {
     if ((!isMultiLineInput && keyPressed === 'Enter') || (isMultiLineInput && event.ctrlKey && keyPressed === 'Enter')) {
-        element = document.querySelector('[data-cy=confirm]') || document.querySelector('a.save') || document.querySelector('.kn-submit button');
+        element = document.querySelector('[data-cy=confirm]')
+            || document.querySelector('a.save')
+            || document.querySelector('.kn-submit button')
+            || document.querySelector('.kn-input[type=submit]');
 
         if (element && (element.closest('#settings-js') || element.closest('#settings-css')))
             return; //Ignore Enter in the Javascript and CSS editors.  Use Alt-S to save, see below KeyS.
