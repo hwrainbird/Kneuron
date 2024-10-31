@@ -182,11 +182,16 @@ document.addEventListener('keydown', async function (event) {
                     } catch (error) { }
                 }, 0);
             }
-
+        } else if (['KeyW', 'KeyE', 'KeyR'].includes(keyPressed)) {
+            const tabLinks = document.querySelectorAll('.tabLink');
+            let tabIndex = ['KeyW', 'KeyE', 'KeyR'].indexOf(keyPressed);
+            if (tabLinks[tabIndex]) {
+                event.preventDefault();
+                element = tabLinks[tabIndex];
+            }
         } else if (keyPressed === 'Backquote') {
             element = document.querySelector('.toolbox-back') || document.querySelector('.ast-button');
-
-        } else if (['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].includes(keyPressed)) { //For Pages only, when a view is selected.
+        } else if (['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].includes(keyPressed)) {
             //Go back to Settings if necessary.
             const toolboxSelector = `[data-cy=toolbox-links]`;
             if (!document.querySelector(toolboxSelector)) {
@@ -204,12 +209,7 @@ document.addEventListener('keydown', async function (event) {
                 let toolIndex = ['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].indexOf(keyPressed) + 1;
                 element = document.querySelector(`[data-cy=toolbox-links] li:nth-child(${toolIndex}) a`);
             }
-
         } else if (keyPressed === 'KeyS') {
-            //Does three things, depending on context:
-            // 1- Activate the Settings toolbox, when a view is selected
-            // 2- Puts cursor on the Filter box when it is visible
-            // 3- Click on Save, when Javascript or CSS editor is active
             element = document.querySelector('[id^=incremental-filter]') || document.querySelector('.is-active a.settings') || document.querySelector('a.save');
         }
     }
