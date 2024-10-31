@@ -138,7 +138,7 @@ document.addEventListener('keydown', async function (event) {
     if (event.altKey &&
         event.code.startsWith('Digit') &&
         event.code.replace('Digit', '') >= 1 &&
-        event.code.replace('Digit', '') <= 6) {
+        event.code.replace('Digit', '') <= 5) {
         const activeElement = document.activeElement;
         if ((activeElement.tagName === 'INPUT' && !activeElement.id.startsWith('incremental-filter')) ||
             activeElement.tagName === 'TEXTAREA' ||
@@ -162,7 +162,7 @@ document.addEventListener('keydown', async function (event) {
 
         event.preventDefault();
     } else if (keyPressed === 'Escape') {
-        element = document.querySelector('[data-cy=cancel]') || document.querySelector('.modal_close') || document.querySelector('a.cancel');
+        element = document.querySelector('[data-cy=cancel]') || document.querySelector('.modal_close') || document.querySelector('a.cancel') || document.querySelector('.header_close');
     } else if (event.altKey) {
         if (keyPressed.includes('Digit')) {
             keyPressed = keyPressed.replace('Digit', '');
@@ -170,7 +170,7 @@ document.addEventListener('keydown', async function (event) {
 
         if (keyPressed >= 1 && keyPressed <= 6) {
             let pageIndex = Number(keyPressed);
-            if (pageIndex === 3 || pageIndex === 4) pageIndex = 7 - pageIndex; //Invert 3 and 4 since Pages is used much more often than Tasks.
+            if (pageIndex === 2 || pageIndex === 3) pageIndex = 5 - pageIndex; //Invert 2 and 3 since Pages is used much more often than Tasks.
             element = document.querySelector(`#sidebar-nav li:nth-child(${pageIndex}) a`);
 
             //This is to prevent the annoying message "You have unsaved changes" that keeps popping up for no reason.
