@@ -27,6 +27,11 @@ const css = `
    height: 300px;
 }
 
+#pages-toolbox form > div .redactor-editor {
+   max-height: 30em;
+   height: 30em;
+}
+
 /* Remove the previous CSS and use this instead */
 .nav-item {
     position: relative;
@@ -53,6 +58,10 @@ injectCSS(css);
 const genericObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.addedNodes.length) {
+            if (mutation.target.querySelector('#sidebar-nav ul')) {
+                reorderNavItems();
+            }
+
             if (mutation.target.querySelector('.toggle-content:not(.auto-open-processed)')) {
                 autoExpandHiddenTogglers();
             }
@@ -122,6 +131,32 @@ async function waitForElement(selector, timeout = 10000) {
     });
 }
 
+function reorderNavItems() {
+    const sidebarNav = document.querySelector('#sidebar-nav ul');
+    if (!sidebarNav) return;
+
+    const order = [
+        'Data',
+        'Pages',
+        'Tasks',
+        'Flows',
+        'Settings',
+        'Data Model'
+    ];
+
+    const items = Array.from(sidebarNav.querySelectorAll('li'));
+    const sortedItems = [];
+
+    order.forEach(name => {
+        const item = items.find(li => li.textContent.trim() === name);
+        if (item) {
+            sortedItems.push(item);
+        }
+    });
+
+    sortedItems.forEach(item => sidebarNav.appendChild(item));
+}
+
 function highlightAndClick(element) {
     if (!element) return;
 
@@ -149,16 +184,29 @@ document.addEventListener('keydown', async function (event) {
 
     let element;
     let keyPressed = event.code;
-    const isMultiLineInput = event.target.tagName === 'TEXTAREA';
 
-    if ((!isMultiLineInput && keyPressed === 'Enter') || (isMultiLineInput && event.ctrlKey && keyPressed === 'Enter')) {
+    if (keyPressed === 'Enter') {
         element = document.querySelector('[data-cy=confirm]')
             || document.querySelector('a.save')
             || document.querySelector('.kn-submit button')
             || document.querySelector('.kn-input[type=submit]');
 
-        if (element && (element.closest('#settings-js') || element.closest('#settings-css')))
-            return; //Ignore Enter in the Javascript and CSS editors.  Use Alt-S to save, see below KeyS.
+        //If on a multi-line object...
+        const isMultiLineInput = event.target.tagName === 'TEXTAREA' || !!event.target.closest('.redactor-editor');
+        if (isMultiLineInput && !event.ctrlKey) {
+            //Just enter: let it insert its line break
+            return;
+        } else if (isMultiLineInput && event.ctrlKey) {
+            //Ctrl+Enter: Save if we're on a multiline object.
+            //Exceptions:
+            //  1- if in the Javascript or CSS editor(Use Alt + S in that case)
+            //  2- if we're on a redactor-editor, where ctrl+enter can't be trapped.  So we need to click save with the mouse.
+            if (element) {
+                if (!!element.closest('#settings-js') || !!element.closest('#settings-css')) {
+                    return; //Ignore Enter in the Javascript and CSS editors.  Use Alt-S to save, see below KeyS.
+                }
+            }
+        }
 
         event.preventDefault();
     } else if (keyPressed === 'Escape') {
@@ -170,7 +218,6 @@ document.addEventListener('keydown', async function (event) {
 
         if (keyPressed >= 1 && keyPressed <= 6) {
             let pageIndex = Number(keyPressed);
-            if (pageIndex === 2 || pageIndex === 3) pageIndex = 5 - pageIndex; //Invert 2 and 3 since Pages is used much more often than Tasks.
             element = document.querySelector(`#sidebar-nav li:nth-child(${pageIndex}) a`);
 
             //This is to prevent the annoying message "You have unsaved changes" that keeps popping up for no reason.
@@ -192,24 +239,28 @@ document.addEventListener('keydown', async function (event) {
         } else if (keyPressed === 'Backquote') {
             element = document.querySelector('.toolbox-back') || document.querySelector('.ast-button');
         } else if (['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].includes(keyPressed)) {
-            //Go back to Settings if necessary.
-            const toolboxSelector = `[data-cy=toolbox-links]`;
-            if (!document.querySelector(toolboxSelector)) {
+            let toolIndex = ['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].indexOf(keyPressed) + 1;
+            element = document.querySelector(`[data-cy=toolbox-links] li:nth-child(${toolIndex}) a`);
+            if (element) {
+                highlightAndClick(element);
+            } else {
+                //Go back to view's settings.
                 element = document.querySelector('.is-active a.settings');
                 if (element) highlightAndClick(element);
-
                 try {
+                    const toolboxSelector = `[data-cy=toolbox-links] li:nth-child(${toolIndex}) a`;
                     await waitForElement(toolboxSelector);
-                    processSecondColumnKeys();
-                } catch (error) { }
-            } else
-                processSecondColumnKeys();
-
-            function processSecondColumnKeys() {
-                let toolIndex = ['KeyQ', 'KeyA', 'KeyZ', 'KeyX'].indexOf(keyPressed) + 1;
-                element = document.querySelector(`[data-cy=toolbox-links] li:nth-child(${toolIndex}) a`);
+                    element = document.querySelector(toolboxSelector);
+                } catch (error) {
+                    console.error('Error encountered in key processing:', error);
+                    return;
+                }
             }
         } else if (keyPressed === 'KeyS') {
+            //Does three things, depending on context:
+            // 1- Activate the Settings toolbox, when a view is selected
+            // 2- Puts cursor on the Filter box when it is visible
+            // 3- Click on Save, when Javascript or CSS editor is active
             element = document.querySelector('[id^=incremental-filter]') || document.querySelector('.is-active a.settings') || document.querySelector('a.save');
         }
     }
