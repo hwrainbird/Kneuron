@@ -32,21 +32,6 @@ const css = `
    height: 30em;
 }
 
-/* Remove the previous CSS and use this instead */
-.nav-item {
-    position: relative;
-    transition: all 0.2s ease-in-out;
-}
-
-/* Parent container styles to ensure proper stacking */
-#objects-nav .vue-recycle-scroller {
-    min-height: 0 !important;
-}
-
-#objects-nav .vue-recycle-scroller__item-wrapper {
-    transform: none !important;
-}
-
 #objects-nav .vue-recycle-scroller__item-view {
     transform: none !important;
     position: relative !important;
@@ -384,7 +369,7 @@ function addTablesFilter() {
     }
 
     function filterListItems(searchText) {
-        const listItems = document.querySelectorAll('[id^=object-li-object_].nav-item');
+        const listItems = document.querySelectorAll('[id^=object-li-object_].nav-item, [id^=role-object-nav-object_].nav-item');
         const searchLower = searchText.toLowerCase();
         let matchFound = false;
 
