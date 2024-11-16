@@ -172,8 +172,9 @@ document.addEventListener('keydown', async function (event) {
 
     if (keyPressed === 'Enter') {
         element = document.querySelector('[data-cy=confirm]')
+            || document.querySelector('[data-cy=save-filters]')
+            || document.querySelector('[data-cy=save]')
             || document.querySelector('a.save')
-            || document.querySelector('.kn-submit button')
             || document.querySelector('.kn-input[type=submit]');
 
         //If on a multi-line object...
