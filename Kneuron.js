@@ -177,6 +177,7 @@ document.addEventListener('keydown', async function (event) {
         element = document.querySelector('[data-cy=confirm]')
             || document.querySelector('[data-cy=save-filters]')
             || document.querySelector('[data-cy=save]')
+            || document.querySelector('[data-cy=save-view-add]')
             || document.querySelector('a.save')
             || document.querySelector('.kn-input[type=submit]');
 
