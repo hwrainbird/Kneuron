@@ -36,6 +36,18 @@ const css = `
     transform: none !important;
     position: relative !important;
 }
+
+#records-history .kn-table-element {
+    height: 78vh;
+}
+
+#records-history .kn-table-element thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+}
+
 `;
 injectCSS(css);
 
