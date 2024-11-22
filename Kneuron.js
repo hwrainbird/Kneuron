@@ -166,13 +166,15 @@ function highlightAndClick(element) {
 }
 
 document.addEventListener('keydown', async function (event) {
+    const activeElement = document.activeElement;
+    const knackSearch = document.querySelector('input[type="search"]');
+
     // First check if we're in an input field
     if (event.altKey &&
         event.code.startsWith('Digit') &&
         event.code.replace('Digit', '') >= 1 &&
         event.code.replace('Digit', '') <= 5) {
-        const activeElement = document.activeElement;
-        if ((activeElement.tagName === 'INPUT' && !activeElement.id.startsWith('incremental-filter')) ||
+        if ((activeElement.tagName === 'INPUT' && !activeElement.id.startsWith('incremental-filter') && activeElement !== knackSearch) ||
             activeElement.tagName === 'TEXTAREA' ||
             activeElement.isContentEditable) {
             return; // Exit early, allowing default Alt+number behavior
@@ -262,9 +264,16 @@ document.addEventListener('keydown', async function (event) {
         } else if (keyPressed === 'KeyS') {
             //Does three things, depending on context:
             // 1- Activate the Settings toolbox, when a view is selected
-            // 2- Puts cursor on the Filter box when it is visible
+            // 2- Puts cursor on the Filter box when it is visible, or on Knack's Field Filter (toggling between both)
             // 3- Click on Save, when Javascript or CSS editor is active
-            element = document.querySelector('[id^=incremental-filter]') || document.querySelector('.is-active a.settings') || document.querySelector('a.save');
+            if (activeElement === document.querySelector('#incremental-filter-tables')) {
+                element = knackSearch;
+            } else {
+                element = document.querySelector('[id^=incremental-filter]')
+                    || document.querySelector('.is-active a.settings')
+                    || document.querySelector('a.save')
+                    || document.querySelector('input[type="search"]');
+            }
         }
     }
 
