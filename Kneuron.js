@@ -48,6 +48,12 @@ const css = `
     z-index: 1;
 }
 
+.idTextStyle {
+    color: #83006d !important;
+    font-size: small;
+    font-weight: 100 !important;
+    white-space: pre;
+}
 `;
 injectCSS(css);
 
@@ -91,6 +97,18 @@ const genericObserver = new MutationObserver((mutations) => {
             if (mutation.target.querySelector('h3[data-cy="page-filter-menu"]:not(.filter-processed)')) {
                 addPagesFilter();
                 mutation.target.querySelector('h3[data-cy="page-filter-menu"]').classList.add('filter-processed');
+            }
+
+            if (mutation.target.querySelector('.page-list-sortable .nav-item')) {
+                addSceneNumbers();
+            }
+
+            if (mutation.target.querySelector('.vue-recycle-scroller__item-view .nav-item')) {
+                addObjectNumbers();
+            }
+
+            if (mutation.target.querySelector('.view[data-view-key]')) {
+                addViewNumbers();
             }
         }
     });
@@ -703,4 +721,52 @@ function addFieldsFilter() {
 
         return isMatch;
     }
+}
+
+function addSceneNumbers() {
+    const menuItems = document.querySelectorAll(".page-list-sortable .nav-item");
+    menuItems.forEach(function (menuItem) {
+        const sceneId = menuItem.id.match(/scene_(\d+)/);
+        if (sceneId) {
+            const sceneNumber = sceneId[1];
+            const menuTextElement = menuItem.querySelector(".name span");
+            if (menuTextElement) {
+                if (!menuTextElement.textContent.includes(`scene_${sceneNumber}`)) {
+                    menuTextElement.innerHTML += ` <span class=idTextStyle>  scene_${sceneNumber}</span>`;
+                }
+            }
+        }
+    });
+}
+
+function addObjectNumbers() {
+    const objectMenuItems = document.querySelectorAll(".vue-recycle-scroller__item-view .nav-item");
+    objectMenuItems.forEach(function (objectMenuItem) {
+        const objectIdMatch = objectMenuItem.id.match(/object_(\d+)/);
+        if (objectIdMatch) {
+            const objectNumber = objectIdMatch[1];
+            const objectTextLabel = objectMenuItem.querySelector(".label");
+            if (objectTextLabel) {
+                if (!objectTextLabel.textContent.includes(`object_${objectNumber}`)) {
+                    objectTextLabel.innerHTML += ` <span class=idTextStyle>  object_${objectNumber}</span>`;
+                }
+            }
+        }
+    });
+}
+
+function addViewNumbers() {
+    const viewItems = document.querySelectorAll(".view[data-view-key]");
+    viewItems.forEach(function (viewItem) {
+        const viewIdMatch = viewItem.getAttribute('data-view-key').match(/view_(\d+)/);
+        if (viewIdMatch) {
+            const viewNumber = viewIdMatch[1];
+            const viewNameElement = viewItem.querySelector(".viewName_label");
+            if (viewNameElement) {
+                if (!viewNameElement.textContent.includes(`view_${viewNumber}`)) {
+                    viewNameElement.innerHTML += ` <span class=idTextStyle>  view_${viewNumber}</span>`;
+                }
+            }
+        }
+    });
 }
