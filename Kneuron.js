@@ -49,7 +49,7 @@ const css = `
 }
 
 .idTextStyle {
-    color: #83006d !important;
+    color: #9b9b9b !important;
     font-size: small;
     font-weight: 100 !important;
     white-space: pre;
@@ -292,6 +292,8 @@ document.addEventListener('keydown', async function (event) {
                     || document.querySelector('a.save')
                     || document.querySelector('input[type="search"]');
             }
+        } else if (keyPressed === 'KeyM') {
+            toggleDividerMinMax();
         }
     }
 
@@ -724,12 +726,12 @@ function addFieldsFilter() {
 }
 
 function addSceneNumbers() {
-    const menuItems = document.querySelectorAll(".page-list-sortable .nav-item");
+    const menuItems = document.querySelectorAll('.page-list-sortable .nav-item');
     menuItems.forEach(function (menuItem) {
         const sceneId = menuItem.id.match(/scene_(\d+)/);
         if (sceneId) {
             const sceneNumber = sceneId[1];
-            const menuTextElement = menuItem.querySelector(".name span");
+            const menuTextElement = menuItem.querySelector('.name span');
             if (menuTextElement) {
                 if (!menuTextElement.textContent.includes(`scene_${sceneNumber}`)) {
                     menuTextElement.innerHTML += ` <span class=idTextStyle>  scene_${sceneNumber}</span>`;
@@ -740,12 +742,12 @@ function addSceneNumbers() {
 }
 
 function addObjectNumbers() {
-    const objectMenuItems = document.querySelectorAll(".vue-recycle-scroller__item-view .nav-item");
+    const objectMenuItems = document.querySelectorAll('.vue-recycle-scroller__item-view .nav-item');
     objectMenuItems.forEach(function (objectMenuItem) {
         const objectIdMatch = objectMenuItem.id.match(/object_(\d+)/);
         if (objectIdMatch) {
             const objectNumber = objectIdMatch[1];
-            const objectTextLabel = objectMenuItem.querySelector(".label");
+            const objectTextLabel = objectMenuItem.querySelector('.label');
             if (objectTextLabel) {
                 if (!objectTextLabel.textContent.includes(`object_${objectNumber}`)) {
                     objectTextLabel.innerHTML += ` <span class=idTextStyle>  object_${objectNumber}</span>`;
@@ -756,12 +758,12 @@ function addObjectNumbers() {
 }
 
 function addViewNumbers() {
-    const viewItems = document.querySelectorAll(".view[data-view-key]");
+    const viewItems = document.querySelectorAll('.view[data-view-key]');
     viewItems.forEach(function (viewItem) {
         const viewIdMatch = viewItem.getAttribute('data-view-key').match(/view_(\d+)/);
         if (viewIdMatch) {
             const viewNumber = viewIdMatch[1];
-            const viewNameElement = viewItem.querySelector(".viewName_label");
+            const viewNameElement = viewItem.querySelector('.viewName_label');
             if (viewNameElement) {
                 if (!viewNameElement.textContent.includes(`view_${viewNumber}`)) {
                     viewNameElement.innerHTML += ` <span class=idTextStyle>  view_${viewNumber}</span>`;
@@ -769,4 +771,17 @@ function addViewNumbers() {
             }
         }
     });
+}
+
+function toggleDividerMinMax() {
+    const divider = document.querySelector('.divider');
+    if (divider) {
+        const dblClickEvent = new MouseEvent('dblclick', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+        });
+
+        divider.dispatchEvent(dblClickEvent);
+    }
 }
