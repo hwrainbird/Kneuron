@@ -51,8 +51,9 @@ const css = `
 .idTextStyle {
     color: #9b9b9b !important;
     font-size: small;
-    font-weight: 100 !important;
+    font-weight: 400 !important;
     white-space: pre;
+    font-family: Inter,sans-serif;
 }
 `;
 injectCSS(css);
@@ -99,16 +100,16 @@ const genericObserver = new MutationObserver((mutations) => {
                 mutation.target.querySelector('h3[data-cy="page-filter-menu"]').classList.add('filter-processed');
             }
 
-            if (mutation.target.querySelector('.page-list-sortable .nav-item')) {
-                addSceneNumbers();
+            if (mutation.target.querySelector('.page-list-sortable .nav-item:not(:has(.idTextStyle))')) {
+                addSceneIDs();
             }
 
-            if (mutation.target.querySelector('.vue-recycle-scroller__item-view .nav-item')) {
-                addObjectNumbers();
+            if (mutation.target.querySelector('.vue-recycle-scroller__item-view .nav-item:not(:has(.idTextStyle))')) {
+                addObjectIDs();
             }
 
-            if (mutation.target.querySelector('.view[data-view-key]')) {
-                addViewNumbers();
+            if (mutation.target.querySelector('.view[data-view-key]:not(:has(.idTextStyle))')) {
+                addViewIDs();
             }
         }
     });
@@ -725,50 +726,36 @@ function addFieldsFilter() {
     }
 }
 
-function addSceneNumbers() {
-    const menuItems = document.querySelectorAll('.page-list-sortable .nav-item');
-    menuItems.forEach(function (menuItem) {
-        const sceneId = menuItem.id.match(/scene_(\d+)/);
-        if (sceneId) {
-            const sceneNumber = sceneId[1];
-            const menuTextElement = menuItem.querySelector('.name span');
-            if (menuTextElement) {
-                if (!menuTextElement.textContent.includes(`scene_${sceneNumber}`)) {
-                    menuTextElement.innerHTML += ` <span class=idTextStyle>  scene_${sceneNumber}</span>`;
-                }
-            }
+function addSceneIDs() {
+    const elements = document.querySelectorAll('.page-list-sortable .nav-item:not(:has(.idTextStyle))');
+    elements.forEach(function (element) {
+        const sceneId = element.getAttribute('data-key');
+        const menuTextElement = element.querySelector('.name span');
+        if (sceneId && menuTextElement) {
+            menuTextElement.innerHTML += ` <span class=idTextStyle>  ${sceneId}</span>`;
         }
     });
 }
 
-function addObjectNumbers() {
-    const objectMenuItems = document.querySelectorAll('.vue-recycle-scroller__item-view .nav-item');
-    objectMenuItems.forEach(function (objectMenuItem) {
-        const objectIdMatch = objectMenuItem.id.match(/object_(\d+)/);
-        if (objectIdMatch) {
-            const objectNumber = objectIdMatch[1];
-            const objectTextLabel = objectMenuItem.querySelector('.label');
-            if (objectTextLabel) {
-                if (!objectTextLabel.textContent.includes(`object_${objectNumber}`)) {
-                    objectTextLabel.innerHTML += ` <span class=idTextStyle>  object_${objectNumber}</span>`;
-                }
-            }
+function addObjectIDs() {
+    const elements = document.querySelectorAll('.vue-recycle-scroller__item-view .nav-item:not(:has(.idTextStyle))');
+    elements.forEach(function (element) {
+        console.log('element =', element);
+        const objectTextLabel = element.querySelector('.label');
+        const objectId = element.id.match(/object_(\d+)/);
+        if (objectId && objectTextLabel) {
+            objectTextLabel.innerHTML += ` <span class=idTextStyle>  ${objectId[0]}</span>`;
         }
     });
 }
 
-function addViewNumbers() {
-    const viewItems = document.querySelectorAll('.view[data-view-key]');
-    viewItems.forEach(function (viewItem) {
-        const viewIdMatch = viewItem.getAttribute('data-view-key').match(/view_(\d+)/);
-        if (viewIdMatch) {
-            const viewNumber = viewIdMatch[1];
-            const viewNameElement = viewItem.querySelector('.viewName_label');
-            if (viewNameElement) {
-                if (!viewNameElement.textContent.includes(`view_${viewNumber}`)) {
-                    viewNameElement.innerHTML += ` <span class=idTextStyle>  view_${viewNumber}</span>`;
-                }
-            }
+function addViewIDs() {
+    const elements = document.querySelectorAll('.view[data-view-key]:not(:has(.idTextStyle))');
+    elements.forEach(function (element) {
+        const viewId = element.getAttribute('data-view-key');
+        const viewTitle = element.querySelector('h2');
+        if (viewId && viewTitle && !element.querySelector('.idTextStyle')) {
+            viewTitle.innerHTML += ` <span class=idTextStyle>  ${viewId}</span>`;
         }
     });
 }
