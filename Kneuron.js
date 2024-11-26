@@ -100,12 +100,12 @@ const genericObserver = new MutationObserver((mutations) => {
                 mutation.target.querySelector('h3[data-cy="page-filter-menu"]').classList.add('filter-processed');
             }
 
-            if (mutation.target.querySelector('.page-list-sortable .nav-item:not(:has(.idTextStyle))')) {
-                addSceneIDs();
-            }
-
             if (mutation.target.querySelector('.vue-recycle-scroller__item-view .nav-item:not(:has(.idTextStyle))')) {
                 addObjectIDs();
+            }
+
+            if (mutation.target.querySelector('.page-list-sortable .nav-item:not(:has(.idTextStyle))')) {
+                addSceneIDs();
             }
 
             if (mutation.target.querySelector('.view[data-view-key]:not(:has(.idTextStyle))')) {
@@ -726,6 +726,17 @@ function addFieldsFilter() {
     }
 }
 
+async function addObjectIDs() {
+    const elements = document.querySelectorAll('.vue-recycle-scroller__item-view .nav-item:not(:has(.idTextStyle))');
+    elements.forEach(function (element) {
+        const objectTextLabel = element.querySelector('.label') || element.querySelector('.transition');
+        const objectId = element.id.match(/object_(\d+)/);
+        if (objectId && objectTextLabel) {
+            objectTextLabel.innerHTML += ` <span class=idTextStyle>  ${objectId[0]}</span>`;
+        }
+    });
+}
+
 function addSceneIDs() {
     const elements = document.querySelectorAll('.page-list-sortable .nav-item:not(:has(.idTextStyle))');
     elements.forEach(function (element) {
@@ -733,18 +744,6 @@ function addSceneIDs() {
         const menuTextElement = element.querySelector('.name span');
         if (sceneId && menuTextElement) {
             menuTextElement.innerHTML += ` <span class=idTextStyle>  ${sceneId}</span>`;
-        }
-    });
-}
-
-function addObjectIDs() {
-    const elements = document.querySelectorAll('.vue-recycle-scroller__item-view .nav-item:not(:has(.idTextStyle))');
-    elements.forEach(function (element) {
-        console.log('element =', element);
-        const objectTextLabel = element.querySelector('.label');
-        const objectId = element.id.match(/object_(\d+)/);
-        if (objectId && objectTextLabel) {
-            objectTextLabel.innerHTML += ` <span class=idTextStyle>  ${objectId[0]}</span>`;
         }
     });
 }
