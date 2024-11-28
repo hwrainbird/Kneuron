@@ -1,4 +1,4 @@
-//Kneuron extension by Cortex R&D Inc.
+﻿//Kneuron extension by Cortex R&D Inc.
 
 function injectCSS(css) {
     const style = document.createElement('style');
@@ -281,6 +281,8 @@ document.addEventListener('keydown', async function (event) {
                 }
             }
         } else if (keyPressed === 'KeyS') {
+            event.preventDefault(); //Prevent the added "ß" char on Mac.
+
             //Does three things, depending on context:
             // 1- Activate the Settings toolbox, when a view is selected
             // 2- Puts cursor on the Filter box when it is visible, or on Knack's Field Filter (toggling between both)
@@ -399,6 +401,7 @@ function addTablesFilter() {
         searchInput.style.borderRadius = '4px';
         searchInput.style.border = '1px solid #ccc';
         searchInput.style.height = '35px';
+        searchInput.style.width = '140px';
         searchInput.id = 'incremental-filter-tables';
         searchInput.addEventListener('input', (e) => {
             document.querySelector('.left-toolbox').scrollTop = 0;
